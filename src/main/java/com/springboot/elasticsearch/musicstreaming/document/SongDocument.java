@@ -1,11 +1,7 @@
 package com.springboot.elasticsearch.musicstreaming.document;
-
 import lombok.Data;
 
-import java.util.Date;
-
 // this is the model
-
 @Data
 public class SongDocument {
     private String id;

@@ -1,5 +1,4 @@
 package com.springboot.elasticsearch.musicstreaming.controller;
-
 import com.springboot.elasticsearch.musicstreaming.document.SongDocument;
 import com.springboot.elasticsearch.musicstreaming.service.SongService;
 import org.springframework.http.*;
@@ -50,12 +49,6 @@ public class SongController {
     public List<SongDocument> findAll() throws Exception {
         return songService.findAll();
     }
-
-
-//    @GetMapping(value = "/search")
-//    public List<SongDocument> search(@RequestParam(value = "Black Pumas - Colors (Official Live Session)") String name) throws Exception {
-//        return songService.searchByName(name);
-//    }
 
     // search song by name
     @CrossOrigin(origins = "http://localhost:3000")

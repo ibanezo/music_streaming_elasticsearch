@@ -3,7 +3,6 @@ package com.springboot.elasticsearch.musicstreaming.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.elasticsearch.musicstreaming.document.SongDocument;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -21,7 +20,6 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +34,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-
 import static com.springboot.elasticsearch.musicstreaming.util.Constant.INDEX;
-import static com.springboot.elasticsearch.musicstreaming.util.Constant.TYPE;
 
 @Service
 @Slf4j
 public class SongService {
-
     private RestHighLevelClient client;
-
-
     /*
     ObjectMapper to convert our SongDocument Object to a Map object.
     This is needed because when you send the SongDocument object to Elasticsearch
@@ -72,14 +65,10 @@ public class SongService {
 
         IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
         return indexResponse.getResult().name();
-
-//        return "created";
     }
 
     public String updateSong(SongDocument document) throws Exception {
-
         SongDocument resultDocument = findById(document.getId());
-
         UpdateRequest updateRequest = new UpdateRequest(INDEX,resultDocument.getId());
 
         updateRequest.doc(convertSongDocumentToMap(document));
@@ -89,7 +78,6 @@ public class SongService {
     }
 
     public List<SongDocument> findAll() throws Exception {
-
         SearchRequest searchRequest = buildSearchRequest(INDEX);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
@@ -102,17 +90,9 @@ public class SongService {
     }
 
     public SongDocument findById(String id) throws Exception {
-        // TODO add try blocks
-//        try {
-            GetRequest getRequest = new GetRequest(INDEX, id);
-            GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-            Map<String, Object> resultMap = getResponse.getSource();
-
-//        } catch (ElasticsearchException exception) {
-//            if (exception.status() == RestStatus.CONFLICT) {
-//                // do smth
-//            }
-//        }
+        GetRequest getRequest = new GetRequest(INDEX, id);
+        GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+        Map<String, Object> resultMap = getResponse.getSource();
         return convertMapToSongDocument(resultMap);
     }
 
@@ -136,24 +116,21 @@ public class SongService {
         List<SongDocument> profileDocuments = new ArrayList<>();
         for (SearchHit hit : searchHit) {
             profileDocuments
-                    .add(objectMapper
-                            .convertValue(hit
-                                    .getSourceAsMap(), SongDocument.class));
+                .add(objectMapper
+                .convertValue(hit
+                .getSourceAsMap(), SongDocument.class));
         }
         return profileDocuments;
     }
 
     // Finding Song by name, with fuzzines included
     public List<SongDocument> findSongByName(String name) throws Exception{
-
-
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.indices(INDEX);
-
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         MatchQueryBuilder matchQueryBuilder = QueryBuilders
-                .matchQuery("name",name)
+                .matchQuery("name", name)
                 .fuzziness(Fuzziness.AUTO)
                 .operator(Operator.AND);
 
@@ -171,12 +148,9 @@ public class SongService {
     // delete a song document
     public String deleteSongDocument(String id) throws Exception {
         DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
-        DeleteResponse response = client.delete(deleteRequest,RequestOptions.DEFAULT);
+        DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
 
-        return response
-                .getResult()
-                .name();
-
+        return response.getResult().name();
     }
 
     // Stream the song audio
