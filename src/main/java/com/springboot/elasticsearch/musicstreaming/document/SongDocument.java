@@ -10,10 +10,10 @@ import java.util.Date;
 public class SongDocument {
     private String id;
     private String name;
-    //    private List<Artist> artists;
-//    private List<Image> images;
+    private String artist;
+    private String image;
     private String albumType;
-    private Date releaseDate;
+    private String releaseDate;
     private String releaseDatePrecision;
     private String path;
 }

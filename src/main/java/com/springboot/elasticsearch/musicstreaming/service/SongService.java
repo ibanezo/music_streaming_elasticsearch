@@ -26,8 +26,14 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -124,6 +130,7 @@ public class SongService {
         return searchRequest;
     }
 
+    // search
     private List<SongDocument> getSearchResult(SearchResponse response) {
         SearchHit[] searchHit = response.getHits().getHits();
         List<SongDocument> profileDocuments = new ArrayList<>();
@@ -161,8 +168,8 @@ public class SongService {
 
     }
 
+    // delete a song document
     public String deleteSongDocument(String id) throws Exception {
-
         DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
         DeleteResponse response = client.delete(deleteRequest,RequestOptions.DEFAULT);
 
@@ -170,5 +177,23 @@ public class SongService {
                 .getResult()
                 .name();
 
+    }
+
+    // Stream the song audio
+    public ResponseEntity<StreamingResponseBody> playSongDocument(String id, HttpServletResponse response ) throws Exception {
+        SongDocument song = this.findById(id);
+        File file = new File(song.getPath());
+        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+        response.setHeader(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
+        response.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes");
+        return ResponseEntity.ok(
+                (outputStream -> {
+                    FileInputStream fis = new FileInputStream(file);
+                    byte[] bytes = new byte[(int) file.length()];
+                    fis.read(bytes);
+                    outputStream.write(bytes);
+                    fis.close();
+                })
+        );
     }
 }
