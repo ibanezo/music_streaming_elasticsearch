@@ -146,7 +146,7 @@ public class SongService {
     }
 
     // delete a song document
-    public String deleteSongDocument(String id) throws Exception {
+    public String deleteSong(String id) throws Exception {
         DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
         DeleteResponse response = client.delete(deleteRequest, RequestOptions.DEFAULT);
 

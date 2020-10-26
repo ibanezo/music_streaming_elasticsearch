@@ -59,8 +59,8 @@ public class SongController {
 
     // delete a song by id
     @DeleteMapping("/delete/{id}")
-    public String deleteSongDocument(@PathVariable String id) throws Exception {
-        return songService.deleteSongDocument(id);
+    public String deleteSong(@PathVariable String id) throws Exception {
+        return songService.deleteSong(id);
     }
 
     // play song
