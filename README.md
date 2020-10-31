@@ -1,9 +1,7 @@
 # Music streaming application
 ### **ElasticSearch integration using Spring Boot.**
 
-This is still **_work in progress_**, the backend part is almost finished, but for the frontend stay tuned!
-
-The project is imagined to be an application which will allow users to search their favorite songs and listen them online.
+The project is an application which allows users to search their favorite songs and listen them online.
 All the searching would be implemented using ElasticSearch for advanced and fast searching.
 
 The version of the ElasticSearch used for this project is **7.4.2**. 
